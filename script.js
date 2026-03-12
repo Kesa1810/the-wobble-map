@@ -33,11 +33,30 @@ function animate() {
 
     shapes.forEach(shape => {
         shape.angle += (Math.random() - 0.5) * 0.2;
+
         shape.x += Math.cos(shape.angle) * shape.speed;
         shape.y += Math.sin(shape.angle) * shape.speed;
-        dx = shape.x - shape.originX;
-        dy = shape.y - shape.originY;
-        distance = Math.sqrt(dx * dx + dy * dy); // bleh why are we doing math :(
+
+        // WALL COLLISION
+        if (shape.x - shape.width / 2 < 0) {
+            shape.x = shape.width / 2;
+            shape.angle = Math.PI - shape.angle;
+        }
+
+        if (shape.x + shape.width / 2 > canvas.width) {
+            shape.x = canvas.width - shape.width / 2;
+            shape.angle = Math.PI - shape.angle;
+        }
+
+        if (shape.y - shape.height / 2 < 0) {
+            shape.y = shape.height / 2;
+            shape.angle = -shape.angle;
+        }
+
+        if (shape.y + shape.height / 2 > canvas.height) {
+            shape.y = canvas.height - shape.height / 2;
+            shape.angle = -shape.angle;
+        }
 
         ctx.beginPath();
         ctx.rect(
@@ -45,14 +64,15 @@ function animate() {
             shape.y - shape.height / 2,
             shape.width,
             shape.height
-        )
+        );
 
         ctx.font = "20px Arial";
         ctx.fillStyle = "#000";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(shape.number, shape.x, shape.y);
-        ctx.stroke()
+
+        ctx.stroke();
     });
 
     requestAnimationFrame(animate);
